@@ -32,7 +32,9 @@ void Game::gameLoop() {
 }
 
 void Game::cleanUp() {
-
+	SDL_DestroyRenderer(m_renderer);
+	SDL_DestroyWindow(m_window);
+	SDL_Quit();
 }
 
 void Game::getInput() {
