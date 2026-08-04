@@ -3,7 +3,8 @@
 int main()
 {
 	Game game;
-	game.setupWindow();
+	game.isRunning = game.setupWindow();
+	game.gameLoop();
 	std::cout << "Hello, World!" << std::endl;
 	return 0;
 }
