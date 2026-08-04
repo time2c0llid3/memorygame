@@ -3,12 +3,13 @@
 
 class Game {
 	private:
-		int windowWidth = 1280;
-		int windowHeight = 720;
-		SDL_Window* window = nullptr;
+		const int m_windowWidth{ 1280 };
+		const int m_windowHeight{ 720 };
+		SDL_Window* m_window{ nullptr };
 	public:
-		bool isRunning = false;
+		bool isRunning{ false };
 		bool setupWindow();
 		void gameLoop();
+		void cleanUp();
 };
 
