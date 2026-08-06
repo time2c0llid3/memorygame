@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(MemoryGame)
-
-add_executable(memexec src/main.cpp src/game.cpp)
+aux_source_directory(src SOURCES)
+add_executable(memexec ${SOURCES})
 
 target_include_directories(memexec PRIVATE include)
 find_package(SDL3 REQUIRED)

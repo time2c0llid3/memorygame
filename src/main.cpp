@@ -3,8 +3,10 @@
 int main()
 {
 	Game game;
-	game.isRunning = game.setupWindow();
+	if (game.setupWindow()) {
+		game.isRunning = true;
+	}
 	game.gameLoop();
-	std::cout << "Hello, World!" << std::endl;
+	game.cleanUp();
 	return 0;
 }
