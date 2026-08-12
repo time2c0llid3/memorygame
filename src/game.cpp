@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include "shader.h"
 bool Game::setupWindow() {
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		SDL_Log("ERROR: Could not Initilize SDL");
@@ -41,6 +41,49 @@ bool Game::setupWindow() {
 };
 
 void Game::gameLoop() {
+	setupObjects();
+	while(isRunning) {
+		getInput();
+		renderContent();
+	}
+}
+
+void Game::cleanUp() {
+	glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+	squareShader->deleteShader();
+	//delete squareShader;
+	SDL_GL_DestroyContext(m_gContext);
+	SDL_DestroyRenderer(m_renderer);
+	SDL_DestroyWindow(m_window);
+	SDL_Quit();
+}
+
+void Game::getInput() {
+	SDL_Event event;
+	SDL_PollEvent(&event);
+	switch (event.type) {
+		case SDL_EVENT_QUIT:
+			isRunning = false;
+	}
+}
+
+void Game::renderContent() {	
+	
+	glClearColor(0.769f, 0.51f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glUseProgram(shaderProgram);
+	squareShader->useShader();
+    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);	
+		
+
+	SDL_GL_SwapWindow(m_window);
+}
+
+void Game::setupObjects() {
 	glGenBuffers(1, &VAO);
 	glGenBuffers(1, &VBO);
 
@@ -59,52 +102,7 @@ void Game::gameLoop() {
 	glBindVertexArray(0);
 	
 	/*-----Shader setup---------*/
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-	
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	while(isRunning) {
-		getInput();
-		renderContent();
-	}
-}
-
-void Game::cleanUp() {
-	SDL_GL_DestroyContext(m_gContext);
-	SDL_DestroyRenderer(m_renderer);
-	SDL_DestroyWindow(m_window);
-	SDL_Quit();
-}
-
-void Game::getInput() {
-	SDL_Event event;
-	SDL_PollEvent(&event);
-	switch (event.type) {
-		case SDL_EVENT_QUIT:
-			isRunning = false;
-	}
-}
-
-void Game::renderContent() {	
-	glClearColor(0.769f, 0.51f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(shaderProgram);
-    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);	
-		
-
-	SDL_GL_SwapWindow(m_window);
+	/*----Texture Code----*/
+	squareShader = new Shader("../shaders/vs.glsl", "../shaders/fs.glsl");
 }
 

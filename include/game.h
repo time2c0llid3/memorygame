@@ -2,6 +2,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <array>
+#include "shader.h"
 
 #define VERTSIZE 12
 #define INDEXSIZE 6
@@ -39,9 +40,12 @@ class Game {
 		};
 		GLuint VAO, VBO, EBO;
 		GLuint shaderProgram;
+		//GLuint texture;
+		Shader* squareShader{ nullptr };
 		/*-----------------------------------*/
 		void getInput();
 		void renderContent();
+		void setupObjects();
 
 	public:
 		bool isRunning{ false };

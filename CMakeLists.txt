@@ -8,3 +8,5 @@ target_include_directories(memexec PRIVATE include)
 find_package(SDL3 REQUIRED)
 target_link_libraries(memexec PRIVATE SDL3)
 target_compile_options(memexec PRIVATE -Wall)
+target_compile_options(memexec PRIVATE -g)
+
