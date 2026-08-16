@@ -1,3 +1,5 @@
+#ifndef SHADER_H
+#define SHADER_H
 #include "shader.h"
 
 Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath) {
@@ -47,3 +49,4 @@ void Shader::useShader() {
 void Shader::deleteShader() {
 	glDeleteProgram(shaderProgramID);
 }
+#endif

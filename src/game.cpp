@@ -1,5 +1,4 @@
 #include "game.h"
-#include "shader.h"
 bool Game::setupWindow() {
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		SDL_Log("ERROR: Could not Initilize SDL");
@@ -75,8 +74,7 @@ void Game::renderContent() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glUseProgram(shaderProgram);
 	squareShader->useShader();
-    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(VAO); 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);	
 		
 
@@ -95,14 +93,28 @@ void Game::setupObjects() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3* sizeof(GLfloat)));
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	
 	/*-----Shader setup---------*/
+	squareShader = new Shader("shaders/vs.glsl", "shaders/fs.glsl");
 	/*----Texture Code----*/
-	squareShader = new Shader("../shaders/vs.glsl", "../shaders/fs.glsl");
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load("assets/card_clubs_04.jpg", &width, &height, &nrChannels, 0);
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else {
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
 }
 

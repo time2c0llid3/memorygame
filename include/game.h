@@ -1,10 +1,14 @@
+#ifndef GAME_H
+#define GAME_H
+#include "stb_image.h"
 #include <SDL3/SDL.h>
 #include <iostream>
 #include <glad/glad.h>
 #include <array>
 #include "shader.h"
 
-#define VERTSIZE 12
+
+#define VERTSIZE 20
 #define INDEXSIZE 6
 
 class Game {
@@ -29,10 +33,10 @@ class Game {
 			"}\n\0";
 			
 		const GLfloat vertices[VERTSIZE] = { 
-			-0.5f,  0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f, -0.5f, 0.0f,
-		     0.5f, -0.5f, 0.0f 
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+		     0.5f, -0.5f, 0.0f, 1.0f, 0.0f
 		};
 		const GLint indices[INDEXSIZE] = { 
 			0, 1, 2,
@@ -40,7 +44,7 @@ class Game {
 		};
 		GLuint VAO, VBO, EBO;
 		GLuint shaderProgram;
-		//GLuint texture;
+		GLuint texture;
 		Shader* squareShader{ nullptr };
 		/*-----------------------------------*/
 		void getInput();
@@ -53,4 +57,4 @@ class Game {
 		void gameLoop();
 		void cleanUp();
 };
-
+#endif
