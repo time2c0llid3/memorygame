@@ -72,15 +72,40 @@ void Game::renderContent() {
 	
 	glClearColor(0.769f, 0.51f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glUseProgram(shaderProgram);
+	
 	squareShader->useShader();
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	
+	glm::mat4 view = glm::mat4(1.0f);
+	const float radius = 1.0f;
+	float camX = sin((SDL_GetTicks()/1000.0f)) * radius;
+	float camZ = cos((SDL_GetTicks()/1000.0f)) * radius;
+
+	view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), cameraTarget, cameraUp);
+	
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
+	unsigned int modelLoc = glGetUniformLocation(squareShader->shaderProgramID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	unsigned int viewLoc = glGetUniformLocation(squareShader->shaderProgramID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	unsigned int projectionLoc = glGetUniformLocation(squareShader->shaderProgramID, "projection");
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
     glBindVertexArray(VAO); 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);	
 		
 
 	SDL_GL_SwapWindow(m_window);
 }
-
+void Game::setupCamera() {
+	cameraPos = glm::vec3(0.0f, 0.0f, 3.0);
+	cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+	cameraDirection = glm::normalize(cameraPos - cameraTarget);
+	cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+	cameraUp = glm::cross(cameraDirection, cameraRight);
+}
 void Game::setupObjects() {
 	glGenBuffers(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -106,6 +131,11 @@ void Game::setupObjects() {
 	/*----Texture Code----*/
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load("assets/card_clubs_04.jpg", &width, &height, &nrChannels, 0);
 	if (data) {
@@ -115,6 +145,6 @@ void Game::setupObjects() {
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
-
+	setupCamera();
 }
 

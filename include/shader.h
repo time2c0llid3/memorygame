@@ -7,9 +7,8 @@
 #include <iostream>
 
 class Shader {
-	private:
-		GLuint shaderProgramID;
 	public:
+		GLuint shaderProgramID;
 		Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
 		void useShader();
 		void deleteShader();
